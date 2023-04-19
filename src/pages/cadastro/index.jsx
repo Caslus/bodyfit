@@ -1,0 +1,87 @@
+import Head from 'next/head'
+import Image from 'next/image'
+import TextInput from '@/components/textInput'
+import { FaAt, FaKey, FaRedo } from 'react-icons/fa'
+
+import { useForm } from 'react-hook-form'
+
+export default function Cadastro() {
+  const { register, handleSubmit } = useForm()
+
+  const onSubmit = (data) => {
+    if (data.password != data.passwordConfirm) {
+      alert('Senhas não conferem')
+      return
+    }
+    const register = async () => {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        body: JSON.stringify({ data }),
+      })
+      return response.json()
+    }
+    register().then((data) => {
+      console.log(data)
+    })
+  }
+
+  return (
+    <>
+      <Head>
+        <title>Bodyfit - Cadastro</title>
+      </Head>
+      <main className="flex min-h-screen flex-col items-center justify-center p-24 space-y-4">
+        <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+          <div className="card-body">
+            <div className="flex flex-col items-center justify-center">
+              <Image src="/logo.svg" alt="Bodyfit" width={300} height={300} />
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <TextInput
+                register={register}
+                label={'email'}
+                icon={<FaAt />}
+                labelText={'Email'}
+                placeholder={'Digite seu email'}
+                type={'email'}
+                required
+              />
+
+              <TextInput
+                register={register}
+                label={'password'}
+                icon={<FaKey />}
+                labelText={'Senha'}
+                placeholder={'Digite sua senha'}
+                type="password"
+                required
+              />
+              <TextInput
+                register={register}
+                label={'passwordConfirm'}
+                icon={<FaRedo />}
+                labelText={'Confirmar senha'}
+                placeholder={'Repita sua senha'}
+                type="password"
+                required
+              />
+
+              <div className="form-control mt-6">
+                <button className="btn btn-primary" type="submit">
+                  Cadastrar
+                </button>
+              </div>
+            </form>
+
+            <label className="label">
+              <a href="/" className="label-text-alt link link-hover">
+                Já possui uma conta?
+              </a>
+            </label>
+          </div>
+        </div>
+      </main>
+    </>
+  )
+}
