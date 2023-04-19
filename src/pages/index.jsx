@@ -9,8 +9,18 @@ export default function Home() {
   const { register, handleSubmit } = useForm()
 
   const onSubmit = (data) => {
-    console.log(data)
+    const register = async () => {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        body: JSON.stringify({ data }),
+      })
+      return response.json()
+    }
+    register().then((data) => {
+      console.log(data)
+    })
   }
+
   return (
     <>
       <Head>
