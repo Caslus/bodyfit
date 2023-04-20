@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import TextInput from '@/components/textInput'
 import { FaAt, FaKey, FaRedo } from 'react-icons/fa'
-
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 
 export default function Cadastro() {
@@ -75,9 +75,9 @@ export default function Cadastro() {
             </form>
 
             <label className="label">
-              <a href="/" className="label-text-alt link link-hover">
+              <Link href="/" className="label-text-alt link link-hover">
                 Já possui uma conta?
-              </a>
+              </Link>
             </label>
           </div>
         </div>

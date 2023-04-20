@@ -2,6 +2,7 @@ import Image from 'next/image'
 import TextInput from '@/components/textInput'
 import { FaAt, FaKey } from 'react-icons/fa'
 import Head from 'next/head'
+import Link from 'next/link'
 
 import { useForm } from 'react-hook-form'
 
@@ -60,9 +61,12 @@ export default function Home() {
             </form>
 
             <label className="label">
-              <a href="/cadastro/" className="label-text-alt link link-hover">
+              <Link
+                href="/cadastro/"
+                className="label-text-alt link link-hover"
+              >
                 Não possui uma conta?
-              </a>
+              </Link>
             </label>
           </div>
         </div>
