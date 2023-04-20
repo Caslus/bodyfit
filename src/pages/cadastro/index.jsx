@@ -1,17 +1,26 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import TextInput from '@/components/textInput'
-import { FaAt, FaKey, FaRedo } from 'react-icons/fa'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import TextInput from '@/components/textInput'
+import Toast from '@/components/Toast'
+import { FaAt, FaKey, FaRedo, FaExclamationTriangle } from 'react-icons/fa'
 import { useForm } from 'react-hook-form'
+import { useState } from 'react'
 
 export default function Cadastro() {
   const { register, handleSubmit } = useForm()
+  const [error, setError] = useState(null)
+
+  const router = useRouter()
 
   const onSubmit = (data) => {
     if (data.password != data.passwordConfirm) {
-      alert('Senhas não conferem')
-      return
+      setError('As senhas não coincidem')
+      const timeout = setTimeout(() => {
+        setError(null)
+      }, 2500)
+      return () => clearTimeout(timeout)
     }
     const register = async () => {
       const response = await fetch('/api/register', {
@@ -20,8 +29,15 @@ export default function Cadastro() {
       })
       return response.json()
     }
-    register().then((data) => {
-      console.log(data)
+    register().then(async (data) => {
+      if (data?.error) {
+        setError(data.error)
+        const timeout = setTimeout(() => {
+          setError(null)
+        }, 2500)
+        return () => clearTimeout(timeout)
+      }
+      router.push('/')
     })
   }
 
@@ -81,6 +97,13 @@ export default function Cadastro() {
             </label>
           </div>
         </div>
+        {error && (
+          <Toast
+            message={error}
+            icon={<FaExclamationTriangle />}
+            color="alert-error"
+          />
+        )}
       </main>
     </>
   )

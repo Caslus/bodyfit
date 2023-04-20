@@ -1,24 +1,43 @@
-import Image from 'next/image'
-import TextInput from '@/components/textInput'
-import { FaAt, FaKey } from 'react-icons/fa'
 import Head from 'next/head'
+import Image from 'next/image'
 import Link from 'next/link'
-
+import { useRouter } from 'next/router'
+import TextInput from '@/components/textInput'
+import Toast from '@/components/Toast'
+import { FaAt, FaExclamationTriangle, FaKey } from 'react-icons/fa'
 import { useForm } from 'react-hook-form'
+import { signIn, useSession } from 'next-auth/react'
+import { useState } from 'react'
 
 export default function Home() {
   const { register, handleSubmit } = useForm()
+  const [error, setError] = useState(null)
+  const { data: session, status } = useSession()
 
-  const onSubmit = (data) => {
-    const register = async () => {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        body: JSON.stringify({ data }),
-      })
-      return response.json()
-    }
-    register().then((data) => {
-      console.log(data)
+  const router = useRouter()
+
+  if (status === 'authenticated') router.push('/dashboard/')
+
+  const onSubmit = async (data) => {
+    const response = await signIn('login', {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    }).then((data) => {
+      if (data.error) {
+        switch (data.error) {
+          case 'CredentialsSignin':
+            setError('Credenciais inválidas')
+            break
+          default:
+            setError('Erro ao realizar login')
+        }
+        const timeout = setTimeout(() => {
+          setError(null)
+        }, 2500)
+        return () => clearTimeout(timeout)
+      }
+      router.push('/dashboard/')
     })
   }
 
@@ -70,6 +89,13 @@ export default function Home() {
             </label>
           </div>
         </div>
+        {error && (
+          <Toast
+            message={error}
+            icon={<FaExclamationTriangle />}
+            color="alert-error"
+          />
+        )}
       </main>
     </>
   )
