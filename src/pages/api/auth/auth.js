@@ -13,7 +13,7 @@ export const login = async (credentials) => {
     if (!passwordMatch) {
       return
     }
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id }, process.env.NEXTAUTH_SECRET, {
       expiresIn: '1d',
     })
     return {

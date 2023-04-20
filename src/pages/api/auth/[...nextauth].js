@@ -36,5 +36,5 @@ export default NextAuth({
     signIn: '/',
     error: '/',
   },
-  secret: process.env.JWT_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 })
