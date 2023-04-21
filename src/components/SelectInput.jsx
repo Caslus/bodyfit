@@ -1,22 +1,10 @@
-function SpanRender({ icon, spanText }) {
-  if (icon != null) {
-    return <span>{icon}</span>
-  } else if (spanText != null) {
-    return <span>{spanText}</span>
-  }
-  return null
-}
-
-export default function TextInput({
+export default function SelectInput({
   icon,
-  spanText,
-  placeholder,
-  type,
-  required,
-  labelText,
   label,
-  step,
-  pattern,
+  labelText,
+  pickerText,
+  required,
+  options,
   register,
 }) {
   return (
@@ -36,16 +24,19 @@ export default function TextInput({
         )}
       </label>
       <label className="input-group">
-        <SpanRender icon={icon} spanText={spanText} />
-        <input
-          type={type != null ? type : 'text'}
-          placeholder={placeholder != null ? placeholder : ''}
+        <span>{icon}</span>
+        <select
+          className="select text-base font-normal input input-bordered w-[calc(100%-3rem)]"
           required={required != null ? required : false}
-          className="input input-bordered w-full"
-          step={step != null ? step : '1'}
-          pattern={pattern}
           {...register(label, { required: required })}
-        />
+        >
+          <option disabled selected>
+            {pickerText}
+          </option>
+          {options.map((option) => (
+            <option value={option.value}>{option.label}</option>
+          ))}
+        </select>
       </label>
     </div>
   )

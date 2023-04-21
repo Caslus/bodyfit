@@ -16,6 +16,9 @@ export default async (req, res) => {
       .catch(() => {
         return res.status(404).json({ error: 'Erro ao encontrar usuário' })
       })
+    if (!user) {
+      return res.status(404).json({ error: 'Erro ao encontrar usuário' })
+    }
     return res.status(200).json({
       id: user.id,
       email: user.email,

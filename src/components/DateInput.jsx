@@ -1,24 +1,6 @@
-function SpanRender({ icon, spanText }) {
-  if (icon != null) {
-    return <span>{icon}</span>
-  } else if (spanText != null) {
-    return <span>{spanText}</span>
-  }
-  return null
-}
+import { FaCalendar } from 'react-icons/fa'
 
-export default function TextInput({
-  icon,
-  spanText,
-  placeholder,
-  type,
-  required,
-  labelText,
-  label,
-  step,
-  pattern,
-  register,
-}) {
+export default function DateInput({ label, labelText, required, register }) {
   return (
     <div className="form-control">
       <label className="label">
@@ -36,14 +18,11 @@ export default function TextInput({
         )}
       </label>
       <label className="input-group">
-        <SpanRender icon={icon} spanText={spanText} />
+        <span>{<FaCalendar />}</span>
         <input
-          type={type != null ? type : 'text'}
-          placeholder={placeholder != null ? placeholder : ''}
+          type={'date'}
           required={required != null ? required : false}
           className="input input-bordered w-full"
-          step={step != null ? step : '1'}
-          pattern={pattern}
           {...register(label, { required: required })}
         />
       </label>

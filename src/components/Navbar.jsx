@@ -3,53 +3,71 @@ import Image from 'next/image'
 import { FaBars, FaCog, FaSignOutAlt, FaUser } from 'react-icons/fa'
 import { signOut } from 'next-auth/react'
 import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
 
-export default function Navbar() {
+export default function Navbar({ children }) {
   const { data: session } = useSession()
+  const [user, setUser] = useState({})
+
+  useEffect(() => {
+    if (!session) return
+    async function getUser() {
+      const user = await fetch(`/api/user/${session.user.id}`)
+      const res = await user.json()
+      if (res) setUser(res)
+    }
+    getUser()
+  }, [session])
+
   return (
-    <div class="drawer drawer-end">
-      <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content flex flex-col">
-        <div class="w-full navbar bg-base-300">
-          <div class="flex-1 px-2 mx-2">
+    <div className="drawer drawer-end">
+      <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
+      <div className="drawer-content flex flex-col">
+        <div className="w-full navbar bg-base-300">
+          <div className="flex-1 px-2 mx-2">
             <Link href="/dashboard">
               <Image src="/logo.svg" alt="Bodyfit" width={100} height={100} />
             </Link>
           </div>
-          <div class="flex-none">
-            <label for="my-drawer-3" class="btn btn-square btn-ghost">
+          <div className="flex-none">
+            <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
               <FaBars />
             </label>
           </div>
         </div>
+        <div className="flex justify-center items-center flex-grow">
+          {children}
+        </div>
       </div>
-      <div class="drawer-side">
-        <label for="my-drawer-3" class="drawer-overlay"></label>
+      <div className="drawer-side">
+        <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
         <ul className="menu p-4 w-80 bg-base-100 justify-between">
           <div>
             <div className="p-4">
-              <p>Olá{session.user?.name ? `, ${session.user.name}` : ''}!</p>
+              <p>Olá{user?.name ? `, ${user.name}` : ''}!</p>
             </div>
             <div className="divider"></div>
-            <li tabIndex={1}>
+            <li>
               <a>
                 <FaUser />
                 Perfil
               </a>
             </li>
-            <li tabIndex={2}>
+            <li>
               <a>
                 <FaCog />
                 Configurações
               </a>
             </li>
-            <li tabIndex={3}>
+          </div>
+          <div>
+            <div className="divider"></div>
+            <li>
               <a onClick={() => signOut({ callbackUrl: '/' })}>
                 <FaSignOutAlt /> Sair
               </a>
             </li>
           </div>
-          <p className="p-4">Bodyfit</p>
         </ul>
       </div>
     </div>
