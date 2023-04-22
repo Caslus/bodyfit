@@ -44,9 +44,8 @@ export default function Complete() {
   }
 
   const onSubmit = async (data) => {
-    console.log(data)
     async function completeUser() {
-      const user = await fetch(`/api/user/complete/${session.user.id}`, {
+      const user = await fetch(`/api/user/${session.user.id}`, {
         body: JSON.stringify({
           name: data.name,
           role: data.role,

@@ -6,6 +6,7 @@ export default function SelectInput({
   required,
   options,
   register,
+  value,
 }) {
   return (
     <div className="form-control">
@@ -29,6 +30,7 @@ export default function SelectInput({
           className="select text-base font-normal input input-bordered w-[calc(100%-3rem)]"
           required={required != null ? required : false}
           {...register(label, { required: required })}
+          value={value}
         >
           <option disabled selected>
             {pickerText}

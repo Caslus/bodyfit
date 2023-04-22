@@ -45,6 +45,7 @@ export default function TextInput({
           step={step != null ? step : '1'}
           pattern={pattern}
           {...register(label, { required: required })}
+          name={label}
         />
       </label>
     </div>

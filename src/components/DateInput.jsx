@@ -1,6 +1,12 @@
 import { FaCalendar } from 'react-icons/fa'
 
-export default function DateInput({ label, labelText, required, register }) {
+export default function DateInput({
+  label,
+  labelText,
+  required,
+  register,
+  value,
+}) {
   return (
     <div className="form-control">
       <label className="label">
@@ -24,6 +30,7 @@ export default function DateInput({ label, labelText, required, register }) {
           required={required != null ? required : false}
           className="input input-bordered w-full"
           {...register(label, { required: required })}
+          value={value}
         />
       </label>
     </div>

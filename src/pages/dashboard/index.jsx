@@ -13,7 +13,9 @@ export default function Dashboard() {
   useEffect(() => {
     if (!session) return
     async function getUser() {
-      const user = await fetch(`/api/user/${session.user.id}`)
+      const user = await fetch(`/api/user/${session.user.id}`, {
+        method: 'GET',
+      })
       const res = await user.json()
       if (res) setUser(res)
     }

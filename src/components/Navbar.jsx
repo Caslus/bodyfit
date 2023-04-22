@@ -1,18 +1,28 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { FaBars, FaCog, FaSignOutAlt, FaUser } from 'react-icons/fa'
+import {
+  FaBars,
+  FaCog,
+  FaShieldAlt,
+  FaSignOutAlt,
+  FaUser,
+} from 'react-icons/fa'
 import { signOut } from 'next-auth/react'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
 export default function Navbar({ children }) {
   const { data: session } = useSession()
+  const router = useRouter()
   const [user, setUser] = useState({})
 
   useEffect(() => {
     if (!session) return
     async function getUser() {
-      const user = await fetch(`/api/user/${session.user.id}`)
+      const user = await fetch(`/api/user/${session.user.id}`, {
+        method: 'GET',
+      })
       const res = await user.json()
       if (res) setUser(res)
     }
@@ -59,6 +69,14 @@ export default function Navbar({ children }) {
                 Configurações
               </a>
             </li>
+            {user?.role == 'ADMIN' && (
+              <li>
+                <a onClick={() => router.push('/dashboard/admin')}>
+                  <FaShieldAlt />
+                  Painel de administrador
+                </a>
+              </li>
+            )}
           </div>
           <div>
             <div className="divider"></div>
