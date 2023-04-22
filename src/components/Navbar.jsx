@@ -57,20 +57,20 @@ export default function Navbar({ children }) {
               <p>Olá{user?.name ? `, ${user.name}` : ''}!</p>
             </div>
             <div className="divider"></div>
-            <li>
+            <li key="profile">
               <a>
                 <FaUser />
                 Perfil
               </a>
             </li>
-            <li>
+            <li key="config">
               <a>
                 <FaCog />
                 Configurações
               </a>
             </li>
             {user?.role == 'ADMIN' && (
-              <li>
+              <li key="admin">
                 <a onClick={() => router.push('/dashboard/admin')}>
                   <FaShieldAlt />
                   Painel de administrador
@@ -80,7 +80,7 @@ export default function Navbar({ children }) {
           </div>
           <div>
             <div className="divider"></div>
-            <li>
+            <li key="exit">
               <a onClick={() => signOut({ callbackUrl: '/' })}>
                 <FaSignOutAlt /> Sair
               </a>

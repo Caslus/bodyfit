@@ -57,7 +57,7 @@ export default function Admin() {
               <div className="card flex-shrink-0 w-full shadow-2xl p-4 gap-2">
                 <h1 className="text-2xl">Painel de Administração</h1>
                 <h2 className="text-xl">Lista de usuários</h2>
-                <div className="table table-zebra">
+                <table className="table table-zebra">
                   <thead>
                     <tr>
                       <th>ID</th>
@@ -103,7 +103,7 @@ export default function Admin() {
                         )
                       })}
                   </tbody>
-                </div>
+                </table>
               </div>
             </div>
           </Navbar>
