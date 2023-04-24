@@ -38,7 +38,7 @@ export default function Navbar({ children }) {
           <div className="flex-1 px-2 mx-2 h-full">
             <div className="h-full w-32 relative">
               <Link href="/dashboard">
-                <Image src="/logo.svg" alt="Bodyfit" fill />
+                <Image src="/logo.png" alt="Bodyfit" fill />
               </Link>
             </div>
           </div>

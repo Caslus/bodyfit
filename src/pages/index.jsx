@@ -57,7 +57,7 @@ export default function Home() {
           <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
             <div className="card-body">
               <div className="flex flex-col items-center justify-center">
-                <Image src="/logo.svg" alt="Bodyfit" width={300} height={300} />
+                <Image src="/logo.png" alt="Bodyfit" width={300} height={300} />
               </div>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <TextInput
