@@ -6,6 +6,7 @@ import {
   FaShieldAlt,
   FaSignOutAlt,
   FaUser,
+  FaHome,
 } from 'react-icons/fa'
 import { signOut } from 'next-auth/react'
 import { useSession } from 'next-auth/react'
@@ -34,10 +35,12 @@ export default function Navbar({ children }) {
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         <div className="w-full navbar bg-base-300">
-          <div className="flex-1 px-2 mx-2">
-            <Link href="/dashboard">
-              <Image src="/logo.svg" alt="Bodyfit" width={100} height={100} />
-            </Link>
+          <div className="flex-1 px-2 mx-2 h-full">
+            <div className="h-full w-32 relative">
+              <Link href="/dashboard">
+                <Image src="/logo.svg" alt="Bodyfit" fill />
+              </Link>
+            </div>
           </div>
           <div className="flex-none">
             <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
@@ -57,6 +60,12 @@ export default function Navbar({ children }) {
               <p>Olá{user?.name ? `, ${user.name}` : ''}!</p>
             </div>
             <div className="divider"></div>
+            <li key="home">
+              <a onClick={() => router.push('/dashboard/')}>
+                <FaHome />
+                Página inicial
+              </a>
+            </li>
             <li key="profile">
               <a>
                 <FaUser />

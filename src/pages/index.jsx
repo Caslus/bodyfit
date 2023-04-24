@@ -8,6 +8,7 @@ import { FaAt, FaExclamationTriangle, FaKey } from 'react-icons/fa'
 import { useForm } from 'react-hook-form'
 import { signIn, useSession } from 'next-auth/react'
 import { useState } from 'react'
+import { CgSpinner } from 'react-icons/cg'
 
 export default function Home() {
   const { register, handleSubmit } = useForm()
@@ -17,6 +18,12 @@ export default function Home() {
   const router = useRouter()
 
   if (status === 'authenticated') router.push('/dashboard/')
+  if (status === 'loading')
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center text-5xl">
+        <CgSpinner className="animate-spin" />
+      </div>
+    )
 
   const onSubmit = async (data) => {
     const response = await signIn('login', {
@@ -40,63 +47,63 @@ export default function Home() {
       router.push('/dashboard/')
     })
   }
-
-  return (
-    <>
-      <Head>
-        <title>Bodyfit - Login</title>
-      </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center p-24 space-y-4">
-        <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-          <div className="card-body">
-            <div className="flex flex-col items-center justify-center">
-              <Image src="/logo.svg" alt="Bodyfit" width={300} height={300} />
-            </div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <TextInput
-                register={register}
-                label={'email'}
-                icon={<FaAt />}
-                labelText={'Email'}
-                placeholder={'Digite seu email'}
-                type={'email'}
-                required
-              />
-
-              <TextInput
-                register={register}
-                label={'password'}
-                icon={<FaKey />}
-                labelText={'Senha'}
-                placeholder={'Digite sua senha'}
-                type="password"
-                required
-              />
-              <div className="form-control mt-6">
-                <button className="btn btn-primary" type="submit">
-                  Login
-                </button>
+  if (status === 'unauthenticated')
+    return (
+      <>
+        <Head>
+          <title>Bodyfit - Login</title>
+        </Head>
+        <main className="flex min-h-screen flex-col items-center justify-center p-24 space-y-4">
+          <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+            <div className="card-body">
+              <div className="flex flex-col items-center justify-center">
+                <Image src="/logo.svg" alt="Bodyfit" width={300} height={300} />
               </div>
-            </form>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <TextInput
+                  register={register}
+                  label={'email'}
+                  icon={<FaAt />}
+                  labelText={'Email'}
+                  placeholder={'Digite seu email'}
+                  type={'email'}
+                  required
+                />
 
-            <label className="label">
-              <Link
-                href="/cadastro/"
-                className="label-text-alt link link-hover"
-              >
-                Não possui uma conta?
-              </Link>
-            </label>
+                <TextInput
+                  register={register}
+                  label={'password'}
+                  icon={<FaKey />}
+                  labelText={'Senha'}
+                  placeholder={'Digite sua senha'}
+                  type="password"
+                  required
+                />
+                <div className="form-control mt-6">
+                  <button className="btn btn-primary" type="submit">
+                    Login
+                  </button>
+                </div>
+              </form>
+
+              <label className="label">
+                <Link
+                  href="/cadastro/"
+                  className="label-text-alt link link-hover"
+                >
+                  Não possui uma conta?
+                </Link>
+              </label>
+            </div>
           </div>
-        </div>
-        {error && (
-          <Toast
-            message={error}
-            icon={<FaExclamationTriangle />}
-            color="alert-error"
-          />
-        )}
-      </main>
-    </>
-  )
+          {error && (
+            <Toast
+              message={error}
+              icon={<FaExclamationTriangle />}
+              color="alert-error"
+            />
+          )}
+        </main>
+      </>
+    )
 }

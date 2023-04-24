@@ -41,6 +41,7 @@ export default async (req, res) => {
         weight: user.weight,
         height: user.height,
         gender: user.gender,
+        workouts: user.workouts,
       })
     } else if (req.method == 'PUT') {
       const data = JSON.parse(req.body)
