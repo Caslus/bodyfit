@@ -79,6 +79,32 @@ export default async (req, res) => {
       return res.status(404).json({ error: 'Erro ao criar treino' })
     }
     if (req.method == 'PUT') {
+      const data = JSON.parse(req.body)
+      const workoutId = parseInt(data.id)
+      if (!isNaN(workoutId) && !isNaN(userId)) {
+        const workout = await prisma.workout
+          .update({
+            where: { id: workoutId },
+            data: {
+              name: data.name,
+              exercises: {
+                deleteMany: {
+                  workoutId: workoutId,
+                },
+                createMany: {
+                  data: data.exercises,
+                },
+              },
+            },
+          })
+          .catch(() => {
+            return res.status(404).json({ error: 'Erro ao editar treino' })
+          })
+        if (workout) {
+          return res.status(200).json({ workout: workout })
+        }
+      }
+      return res.status(404).json({ error: 'Erro ao editar treino' })
     }
     if (req.method == 'DELETE') {
       const workoutId = parseInt(req.query?.params[0])
@@ -97,7 +123,7 @@ export default async (req, res) => {
       if (workout.userId != userId && requester.role != 'ADMIN') {
         return res.status(401).json({ error: 'Não autorizado' })
       }
-      const deleteExercises = await prisma.exercise
+      await prisma.exercise
         .deleteMany({
           where: {
             workoutId: workoutId,
@@ -106,25 +132,20 @@ export default async (req, res) => {
         .catch(() => {
           return res.status(404).json({ error: 'Erro ao deletar treino' })
         })
-      if (!deleteExercises) {
-        return res.status(404).json({ error: 'Erro ao deletar treino' })
-      }
-      const deleteWorkout = await prisma.workout
-        .delete({
-          where: {
-            id: workoutId,
-          },
+        .then(async () => {
+          await prisma.workout
+            .delete({
+              where: {
+                id: workoutId,
+              },
+            })
+            .catch(() => {
+              return res.status(404).json({ error: 'Erro ao deletar treino' })
+            })
+            .then(() => {
+              return res.status(200).json({ success: 'Treino deletado' })
+            })
         })
-        .catch((e) => {
-          return res.status(404).json({ error: 'Erro ao deletar treino' })
-        })
-
-      if (deleteWorkout) {
-        return res.status(200).json({ message: 'Treino deletado' })
-      }
-      return res.status(404).json({ error: 'Erro ao deletar treino' })
     }
-
-    return res.status(401).json({ error: 'Não autorizado' })
   }
 }

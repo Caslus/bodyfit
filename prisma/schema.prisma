@@ -42,7 +42,7 @@ model Workout {
   id        Int        @id @default(autoincrement())
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  user      User       @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   name      String
   exercises Exercise[]
@@ -52,7 +52,7 @@ model Exercise {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  workout   Workout  @relation(fields: [workoutId], references: [id])
+  workout   Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   workoutId Int
   name      String
   sets      Int

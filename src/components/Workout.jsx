@@ -36,7 +36,7 @@ export default function Workout({ workout }) {
             className="btn btn-primary w-32"
             onClick={() => {
               router.push({
-                pathname: '/dashboard/workout',
+                pathname: '/dashboard/workout/edit',
                 query: { workoutId: workout.id },
               })
             }}
