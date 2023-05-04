@@ -24,18 +24,19 @@ enum Gender {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  email     String    @unique
-  password  String
-  role      Role?
-  name      String?
-  nasc      DateTime?
-  weight    Float?
-  height    Int?
-  gender    Gender?
-  workouts  Workout[]
+  id           Int       @id @default(autoincrement())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  email        String    @unique
+  password     String
+  role         Role?
+  name         String?
+  nasc         DateTime?
+  weight       Float?
+  height       Int?
+  gender       Gender?
+  workouts     Workout[]
+  madeWorkouts Workout[] @relation("madeBy")
 }
 
 model Workout {
@@ -46,6 +47,8 @@ model Workout {
   userId    Int
   name      String
   exercises Exercise[]
+  madeBy    User       @relation("madeBy", fields: [madeById], references: [id])
+  madeById  Int
 }
 
 model Exercise {

@@ -15,7 +15,7 @@ import {
   FaTimes,
 } from 'react-icons/fa'
 
-export default function newWorkout() {
+export default function workoutPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [error, setError] = useState(null)
@@ -94,6 +94,7 @@ export default function newWorkout() {
         <div className="card flex-shrink-0 w-[64rem] shadow-2xl">
           <div className="card-body">
             <h1 className="text-4xl font-bold card-title">Editar treino</h1>
+            <p>Criado por: {workout.madeBy?.name}</p>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="w-96">
                 <Controller

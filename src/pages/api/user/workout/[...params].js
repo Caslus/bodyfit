@@ -31,6 +31,11 @@ export default async (req, res) => {
             id: true,
             name: true,
             exercises: true,
+            madeBy: {
+              select: {
+                name: true,
+              },
+            },
           },
         })
         return res.status(200).json({ workouts: workouts })
@@ -44,6 +49,11 @@ export default async (req, res) => {
             id: true,
             name: true,
             exercises: true,
+            madeBy: {
+              select: {
+                name: true,
+              },
+            },
           },
         })
         if (workout) {
@@ -66,6 +76,11 @@ export default async (req, res) => {
             exercises: {
               createMany: {
                 data: data.exercises,
+              },
+            },
+            madeBy: {
+              connect: {
+                id: token.user.user.id,
               },
             },
           },
