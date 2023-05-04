@@ -51,6 +51,7 @@ export default function TextInput({
           {...register(label, { required: required })}
           name={label}
           onKeyDown={(e) => {
+            const regex = new RegExp(pattern)
             if (pattern != null) {
               if (
                 !regex.test(e.key) &&
