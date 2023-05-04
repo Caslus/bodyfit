@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import TextInput from '@/components/TextInput'
 import {
+  FaExclamationTriangle,
   FaIdBadge,
   FaRuler,
   FaUser,
@@ -15,6 +16,7 @@ import SelectInput from '@/components/SelectInput'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import { CgSpinner } from 'react-icons/cg'
+import Toast from '@/components/Toast'
 
 export default function Complete() {
   const { register, handleSubmit } = useForm()
@@ -43,7 +45,34 @@ export default function Complete() {
     router.push('/')
   }
 
+  function setErrorMsg(error) {
+    setError(error)
+    const timeout = setTimeout(() => {
+      setError(null)
+    }, 2500)
+    return () => clearTimeout(timeout)
+  }
+
   const onSubmit = async (data) => {
+    if (
+      data.nasc >= new Date().toISOString().split('T')[0] ||
+      data.nasc < 1900
+    ) {
+      return setErrorMsg('Data de nascimento inválida')
+    }
+    if (data.weight < 20 || data.weight > 500) {
+      return setErrorMsg('Peso inválido')
+    }
+    if (data.height < 100 || data.height > 300) {
+      return setErrorMsg('Altura inválida')
+    }
+    if (data.gender == 'Selecione seu sexo') {
+      return setErrorMsg('Selecione seu sexo')
+    }
+    if (data.role == 'Selecione seu tipo de usuário') {
+      return setErrorMsg('Selecione seu tipo de usuário')
+    }
+
     async function completeUser() {
       const user = await fetch(`/api/user/${session.user.id}`, {
         body: JSON.stringify({
@@ -123,18 +152,19 @@ export default function Complete() {
                         placeholder={'Digite seu peso (Ex: 73.5)'}
                         type={'number'}
                         step={'0.1'}
-                        pattern={'^[0-9]*$'}
+                        maxlength={5}
+                        pattern={'^\\d*\\.?(?:\\d{1,2})?$'}
                         required
                       />
                       <TextInput
                         register={register}
                         label={'height'}
                         icon={<FaRuler />}
-                        labelText={'Altura (m)'}
-                        placeholder={'Digite seu altura (Ex: 1.85)'}
+                        labelText={'Altura (cm)'}
+                        placeholder={'Digite seu altura (Ex: 185)'}
                         type={'number'}
-                        step={'0.01'}
-                        pattern={'^[0-9]*$'}
+                        maxlength={3}
+                        pattern={'\\d'}
                         required
                       />
                       <SelectInput

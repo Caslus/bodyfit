@@ -37,7 +37,10 @@ export default function Cadastro() {
         }, 2500)
         return () => clearTimeout(timeout)
       }
-      router.push('/')
+      router.push({
+        pathname: '/',
+        query: { msg: 'Cadastro realizado com sucesso' },
+      })
     })
   }
 

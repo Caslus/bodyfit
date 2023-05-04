@@ -33,7 +33,7 @@ model User {
   name      String?
   nasc      DateTime?
   weight    Float?
-  height    Float?
+  height    Int?
   gender    Gender?
   workouts  Workout[]
 }

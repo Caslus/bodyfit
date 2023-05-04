@@ -1,15 +1,24 @@
 import Navbar from '@/components/Navbar'
 import TextInput from '@/components/TextInput'
+import Toast from '@/components/Toast'
 import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { FaMinus, FaPen, FaPlus, FaRedo, FaTimes } from 'react-icons/fa'
+import {
+  FaExclamationTriangle,
+  FaMinus,
+  FaPen,
+  FaPlus,
+  FaRedo,
+  FaTimes,
+} from 'react-icons/fa'
 
 export default function newWorkout() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [error, setError] = useState(null)
   const workoutId = router.query.workoutId
   const [workout, setWorkout] = useState({})
   const { register, reset, handleSubmit, control } = useForm({
@@ -47,6 +56,10 @@ export default function newWorkout() {
   }, [session])
 
   const onSubmit = async (data) => {
+    if (data.exercises.length === 0) {
+      setError('Você precisa adicionar pelo menos um exercício.')
+      return
+    }
     const editWorkout = await fetch(`/api/user/workout/${session.user.id}`, {
       method: 'PUT',
       body: JSON.stringify({
@@ -60,8 +73,9 @@ export default function newWorkout() {
           }
         }),
       }),
+    }).then(() => {
+      router.push('/dashboard/')
     })
-    if (editWorkout) router.push('/dashboard/')
   }
 
   const handleDelete = async () => {
@@ -140,6 +154,7 @@ export default function newWorkout() {
                                   placeholder={'Quantas séries?'}
                                   type={'number'}
                                   icon={<FaTimes />}
+                                  pattern={'^\\d*$'}
                                   register={register}
                                   required
                                 />
@@ -205,6 +220,13 @@ export default function newWorkout() {
             </form>
           </div>
         </div>
+        {error && (
+          <Toast
+            message={error}
+            icon={<FaExclamationTriangle />}
+            color="alert-error"
+          />
+        )}
       </Navbar>
     </>
   )

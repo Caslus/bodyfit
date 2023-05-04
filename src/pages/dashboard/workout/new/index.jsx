@@ -1,14 +1,24 @@
 import Navbar from '@/components/Navbar'
 import TextInput from '@/components/TextInput'
+import Toast from '@/components/Toast'
 import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { FaMinus, FaPen, FaPlus, FaRedo, FaTimes } from 'react-icons/fa'
+import {
+  FaExclamationTriangle,
+  FaMinus,
+  FaPen,
+  FaPlus,
+  FaRedo,
+  FaTimes,
+} from 'react-icons/fa'
 
 export default function newWorkout() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [error, setError] = useState(null)
   const { register, handleSubmit, control } = useForm({
     defaultValues: {
       name: '',
@@ -21,6 +31,10 @@ export default function newWorkout() {
   })
 
   const onSubmit = async (data) => {
+    if (data.exercises.length === 0) {
+      setError('Você precisa adicionar pelo menos um exercício.')
+      return
+    }
     const createWorkout = await fetch(`/api/user/workout/${session.user.id}`, {
       method: 'POST',
       body: JSON.stringify({
@@ -103,6 +117,8 @@ export default function newWorkout() {
                                   placeholder={'Quantas séries?'}
                                   type={'number'}
                                   icon={<FaTimes />}
+                                  pattern={'^\\d*$'}
+                                  min={1}
                                   register={register}
                                   required
                                 />
@@ -160,6 +176,13 @@ export default function newWorkout() {
             </form>
           </div>
         </div>
+        {error && (
+          <Toast
+            message={error}
+            icon={<FaExclamationTriangle />}
+            color="alert-error"
+          />
+        )}
       </Navbar>
     </>
   )

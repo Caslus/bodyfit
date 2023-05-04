@@ -16,6 +16,8 @@ export default function TextInput({
   labelText,
   label,
   step,
+  maxlength,
+  min,
   pattern,
   register,
 }) {
@@ -43,9 +45,31 @@ export default function TextInput({
           required={required != null ? required : false}
           className="input input-bordered w-full"
           step={step != null ? step : '1'}
+          maxLength={maxlength != null ? maxlength : '100'}
+          min={min != null ? min : '0'}
           pattern={pattern}
           {...register(label, { required: required })}
           name={label}
+          onKeyDown={(e) => {
+            if (pattern != null) {
+              if (
+                !regex.test(e.key) &&
+                e.key != 'Backspace' &&
+                e.key != 'Tab'
+              ) {
+                e.preventDefault()
+              }
+            }
+            if (maxlength != null) {
+              if (
+                e.target.value.length >= maxlength &&
+                e.key != 'Backspace' &&
+                e.key != 'Tab'
+              ) {
+                e.preventDefault()
+              }
+            }
+          }}
         />
       </label>
     </div>

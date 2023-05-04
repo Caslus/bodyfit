@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import TextInput from '@/components/TextInput'
 import Toast from '@/components/Toast'
-import { FaAt, FaExclamationTriangle, FaKey } from 'react-icons/fa'
+import { FaAt, FaCheck, FaExclamationTriangle, FaKey } from 'react-icons/fa'
 import { useForm } from 'react-hook-form'
 import { signIn, useSession } from 'next-auth/react'
 import { useState } from 'react'
@@ -16,6 +16,7 @@ export default function Home() {
   const { data: session, status } = useSession()
 
   const router = useRouter()
+  const msg = router.query?.msg
 
   if (status === 'authenticated') router.push('/dashboard/')
   if (status === 'loading')
@@ -102,6 +103,9 @@ export default function Home() {
               icon={<FaExclamationTriangle />}
               color="alert-error"
             />
+          )}
+          {msg && (
+            <Toast message={msg} icon={<FaCheck />} color="alert-success" />
           )}
         </main>
       </>
