@@ -19,7 +19,7 @@ export default async (req, res) => {
     }
 
     if (req.method == 'POST') {
-      const data = req.body
+      const data = JSON.parse(req.body)
       let exercisesNumber = data.exercisesNumber
       let workoutFocus = data.workoutFocus
       let workoutObjective = data.workoutObjective
@@ -29,7 +29,6 @@ export default async (req, res) => {
       } else if (requester.gender == 'FEMININO') {
         gender = 'uma mulher'
       }
-
       const headers = new Headers({
         'Content-Type': 'application/json',
         Authorization: process.env.GPT_TOKEN,
@@ -40,12 +39,11 @@ export default async (req, res) => {
         messages: [
           {
             role: 'system',
-            content:
-              "Você é uma máquina em uma academia e deve retornar um treino contendo número de séries, repetições e nome do exercício baseado no objetivo que o atleta deseja alcançar. A resposta deve incluir apenas um JSON, sendo assim, não fale nada além dos exercícios. Não inclua qualquer tipo de explicação ou texto além do JSON. A resposta deve incluir um objeto contendo uma lista de objetos com as chaves sets, name e reps. Exemplo de resposta: {[{name:'Exemplo', sets:3, reps:12}]}",
+            content: `Você é uma máquina em uma academia e deve retornar um treino contendo número de séries, repetições e nome do exercício baseado no objetivo que o atleta deseja alcançar. A resposta deve incluir apenas um JSON, sendo assim, não fale nada além dos exercícios. Não inclua qualquer tipo de explicação ou texto além do JSON. A resposta deve incluir um objeto contendo uma lista de objetos com as chaves sets, name e reps. Exemplo de resposta: {"treino":[{"name":"Exemplo", "sets":3, "reps":12}]}`,
           },
           {
             role: 'user',
-            content: `Sou ${gender} de ${requester.weight}kg e preciso de um treino de ${workoutFocus} com ${exercisesNumber} exercícios para ${workoutObjective}}`,
+            content: `Sou ${gender} de ${requester.weight}kg e preciso de um treino de ${workoutFocus} com exato(s) ${exercisesNumber} exercício(s) para ${workoutObjective}}`,
           },
         ],
       }
@@ -57,10 +55,30 @@ export default async (req, res) => {
       const workout = await fetch(process.env.GPT_URL, config)
         .then((response) => response.json())
         .then((response) => {
-          if (response?.choices[0]?.finish_reason == 'stop') {
+          if (
+            response?.choices &&
+            response.choices[0] &&
+            response?.choices[0]?.finish_reason == 'stop'
+          ) {
+            if (
+              response.choices[0].message.content.substring(
+                response.choices[0].message.content.length - 1
+              ) == '.'
+            ) {
+              response.choices[0].message.content =
+                response.choices[0].message.content.substring(
+                  0,
+                  response.choices[0].message.content.length - 1
+                )
+            }
             return res
               .status(200)
               .json({ workout: response.choices[0].message.content })
+          }
+          if (response?.error) {
+            return res
+              .status(404)
+              .json({ error: 'Houve um erro ao gerar o treino' })
           }
         })
         .catch(() => {

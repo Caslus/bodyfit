@@ -3,17 +3,21 @@ import TextInput from '@/components/TextInput'
 import Toast from '@/components/Toast'
 import { useSession } from 'next-auth/react'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import {
+  FaDumbbell,
   FaExclamationTriangle,
+  FaFlag,
   FaMinus,
   FaPen,
   FaPlus,
   FaRedo,
   FaTimes,
 } from 'react-icons/fa'
+import { Tb123 } from 'react-icons/tb'
 
 export default function newWorkout() {
   const { data: session, status } = useSession()
@@ -22,33 +26,41 @@ export default function newWorkout() {
   const { register, handleSubmit, control } = useForm({
     defaultValues: {
       name: '',
-      exercises: [{ name: '', sets: '', reps: '' }],
     },
   })
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'exercises',
-  })
 
-  const onSubmit = async (data) => {
-    if (data.exercises.length === 0) {
-      setError('Você precisa adicionar pelo menos um exercício.')
-      return
-    }
-    const createWorkout = await fetch(`/api/user/workout/${session.user.id}`, {
+  const onSubmitAiWorkout = async (data) => {
+    await fetch('/api/user/workout/getAiWorkout', {
       method: 'POST',
       body: JSON.stringify({
-        name: data.name,
-        exercises: data.exercises.map((exercise) => {
-          return {
-            name: exercise.name,
-            sets: parseInt(exercise.sets),
-            reps: exercise.reps,
-          }
-        }),
+        exercisesNumber: parseInt(data.exercisesNumber),
+        workoutFocus: data.workoutFocus,
+        workoutObjective: data.workoutObjective,
       }),
     })
-    if (createWorkout) router.push('/dashboard/')
+      .then((res) => {
+        res.json().then(async (workoutJson) => {
+          const workout = JSON.parse(workoutJson.workout)
+          await fetch(`/api/user/workout/${session.user.id}`, {
+            method: 'POST',
+            body: JSON.stringify({
+              name: data.name,
+              exercises: workout.treino.map((exercise) => {
+                return {
+                  name: exercise.name,
+                  sets: exercise.sets,
+                  reps: '' + exercise.reps,
+                }
+              }),
+            }),
+          }).then(() => {
+            router.push('/dashboard/')
+          })
+        })
+      })
+      .catch((err) => {
+        setError(err.err)
+      })
   }
 
   return (
@@ -60,118 +72,95 @@ export default function newWorkout() {
         <div className="card flex-shrink-0 w-[64rem] shadow-2xl">
           <div className="card-body">
             <h1 className="text-4xl font-bold card-title">Novo treino</h1>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="w-96">
-                <Controller
-                  control={control}
-                  name="name"
-                  render={({ field: {} }) => {
-                    return (
-                      <TextInput
-                        label="name"
-                        labelText={'Nome do treino'}
-                        placeholder={'Digite o nome do treino'}
-                        icon={<FaPen />}
-                        register={register}
-                        required
-                      />
-                    )
-                  }}
-                />
-              </div>
+            <p>
+              Preencha os campos a seguir para gerarmos um treino para você!
+            </p>
+            <form onSubmit={handleSubmit(onSubmitAiWorkout)}>
+              <Controller
+                control={control}
+                name="name"
+                render={({ field: {} }) => {
+                  return (
+                    <TextInput
+                      label="name"
+                      labelText={'Nome do treino'}
+                      placeholder={'Digite o nome do treino'}
+                      icon={<FaPen />}
+                      register={register}
+                      required
+                    />
+                  )
+                }}
+              />
+              <Controller
+                control={control}
+                name="exercisesNumber"
+                render={({ field: {} }) => {
+                  return (
+                    <TextInput
+                      label="exercisesNumber"
+                      labelText={'Número de exercícios'}
+                      placeholder={'Insira o número de exercícios (Max: 10)'}
+                      icon={<Tb123 />}
+                      type={'number'}
+                      min={1}
+                      max={10}
+                      maxlength={2}
+                      pattern={'\\d'}
+                      register={register}
+                      required
+                    />
+                  )
+                }}
+              />
+              <Controller
+                control={control}
+                name="workoutFocus"
+                render={({ field: {} }) => {
+                  return (
+                    <TextInput
+                      label="workoutFocus"
+                      labelText={'Foco do treino'}
+                      placeholder={'Digite o foco do treino (Ex: peito)'}
+                      icon={<FaDumbbell />}
+                      register={register}
+                      required
+                    />
+                  )
+                }}
+              />
+              <Controller
+                control={control}
+                name="workoutObjective"
+                render={({ field: {} }) => {
+                  return (
+                    <TextInput
+                      label="workoutObjective"
+                      labelText={'Objetivo do treino'}
+                      placeholder={
+                        'Digite o objetivo do treino (Ex: ganhar massa)'
+                      }
+                      icon={<FaFlag />}
+                      register={register}
+                      required
+                    />
+                  )
+                }}
+              />
               <div className="divider"></div>
-              <div className="flex flex-col gap-2 items-end">
+              <div className="flex flex-col justify-center text-center">
                 <div className="w-full">
-                  <h2 className="font-bold text-xl">Exercícios</h2>
-                  {fields.map((item, index) => {
-                    return (
-                      <div className="flex flew-row justify-between items-end">
-                        <div>
-                          <Controller
-                            control={control}
-                            name={`exercises[${index}].name`}
-                            render={({ field }) => {
-                              return (
-                                <TextInput
-                                  label={`exercises[${index}].name`}
-                                  labelText={'Nome do exercício'}
-                                  placeholder={'Digite o nome do exercício'}
-                                  icon={<FaPen />}
-                                  register={register}
-                                  required
-                                />
-                              )
-                            }}
-                          />
-                        </div>
-
-                        <div>
-                          <Controller
-                            control={control}
-                            name={`exercises[${index}].sets`}
-                            render={({ field }) => {
-                              return (
-                                <TextInput
-                                  label={`exercises[${index}].sets`}
-                                  labelText={'Número de séries'}
-                                  placeholder={'Quantas séries?'}
-                                  type={'number'}
-                                  icon={<FaTimes />}
-                                  pattern={'^\\d*$'}
-                                  min={1}
-                                  register={register}
-                                  required
-                                />
-                              )
-                            }}
-                          />
-                        </div>
-
-                        <div>
-                          <Controller
-                            control={control}
-                            name={`exercises[${index}].reps`}
-                            render={({ field }) => {
-                              return (
-                                <TextInput
-                                  label={`exercises[${index}].reps`}
-                                  labelText={'Número de repetições'}
-                                  placeholder={'Quantas repetições?'}
-                                  icon={<FaRedo />}
-                                  register={register}
-                                  required
-                                />
-                              )
-                            }}
-                          />
-                        </div>
-
-                        <button
-                          className="btn"
-                          type="submit"
-                          onClick={() => {
-                            remove(index)
-                          }}
-                        >
-                          <FaMinus />
-                        </button>
-                      </div>
-                    )
-                  })}
+                  <button className="btn btn-primary w-64" type="submit">
+                    Gerar treino
+                  </button>
                 </div>
-
-                <button
-                  className="btn btn-primary"
-                  onClick={() => append({ name: '', sets: '', reps: '' })}
+                <div className="divider">ou</div>
+                <Link
+                  href="/dashboard/workout/new/manual"
+                  className="underline"
                 >
-                  <FaPlus />
-                </button>
-              </div>
-              <div className="divider"></div>
-              <div className="flex justify-end">
-                <button className="btn btn-primary" type="submit">
-                  Salvar
-                </button>
+                  Preencher manualmente
+                </Link>
               </div>
             </form>
           </div>

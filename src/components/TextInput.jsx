@@ -18,6 +18,7 @@ export default function TextInput({
   step,
   maxlength,
   min,
+  max,
   pattern,
   register,
 }) {
@@ -47,6 +48,7 @@ export default function TextInput({
           step={step != null ? step : '1'}
           maxLength={maxlength != null ? maxlength : '100'}
           min={min != null ? min : '0'}
+          max={max != null ? max : '100000000'}
           pattern={pattern}
           {...register(label, { required: required })}
           name={label}
@@ -64,6 +66,15 @@ export default function TextInput({
             if (maxlength != null) {
               if (
                 e.target.value.length >= maxlength &&
+                e.key != 'Backspace' &&
+                e.key != 'Tab'
+              ) {
+                e.preventDefault()
+              }
+            }
+            if (max != null) {
+              if (
+                '' + e.target.value + e.key > max &&
                 e.key != 'Backspace' &&
                 e.key != 'Tab'
               ) {

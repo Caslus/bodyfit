@@ -4,7 +4,7 @@ export default function Workout({ workout }) {
   const router = useRouter()
 
   return (
-    <div className="card w-96 m-2 shadow-xl">
+    <div className="card w-[40rem] m-2 shadow-xl">
       <div className="card-body flex flex-col justify-between">
         <div className="w-full">
           <div className="card-title m-2">
