@@ -67,7 +67,7 @@ export default function Navbar({ children }) {
               </a>
             </li>
             <li key="profile">
-              <a>
+              <a onClick={() => router.push('/dashboard/profile')}>
                 <FaUser />
                 Perfil
               </a>
