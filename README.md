@@ -36,6 +36,14 @@ instalar dependências
 
     yarn install
 
+configurar .env
+
+    DATABASE_URL= url do banco de dados
+    NEXTAUTH_SECRET= segredo para autenticação
+    NEXTAUTH_URL= url da autenticação (provavelmente local)
+    GPT_URL= url do chat gpt
+    GPT_TOKEN= token do chat gpt
+
 criar banco de dados
 
     npx prisma db push
