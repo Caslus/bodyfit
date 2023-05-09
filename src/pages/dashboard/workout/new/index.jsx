@@ -40,22 +40,26 @@ export default function newWorkout() {
     })
       .then((res) => {
         res.json().then(async (workoutJson) => {
-          const workout = JSON.parse(workoutJson.workout)
-          await fetch(`/api/user/workout/${session.user.id}`, {
-            method: 'POST',
-            body: JSON.stringify({
-              name: data.name,
-              exercises: workout.treino.map((exercise) => {
-                return {
-                  name: exercise.name,
-                  sets: exercise.sets,
-                  reps: '' + exercise.reps,
-                }
+          try {
+            const workout = JSON.parse(workoutJson.workout)
+            await fetch(`/api/user/workout/${session.user.id}`, {
+              method: 'POST',
+              body: JSON.stringify({
+                name: data.name,
+                exercises: workout.treino.map((exercise) => {
+                  return {
+                    name: exercise.name,
+                    sets: exercise.sets,
+                    reps: '' + exercise.reps,
+                  }
+                }),
               }),
-            }),
-          }).then(() => {
-            router.push('/dashboard/')
-          })
+            }).then(() => {
+              router.push('/dashboard/')
+            })
+          } catch (e) {
+            setError('Houve um erro ao gerar o treino')
+          }
         })
       })
       .catch((err) => {
