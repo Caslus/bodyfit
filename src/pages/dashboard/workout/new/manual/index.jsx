@@ -29,6 +29,18 @@ export default function newWorkout() {
     name: 'exercises',
   })
 
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center text-5xl">
+        <CgSpinner className="animate-spin" />
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    router.push('/')
+  }
+
   const onSubmit = async (data) => {
     if (data.exercises.length === 0) {
       setError('Você precisa adicionar pelo menos um exercício.')

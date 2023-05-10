@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { CgSpinner } from 'react-icons/cg'
 import Navbar from '@/components/Navbar'
+import { FaPen } from 'react-icons/fa'
 
 export default function Profile() {
   const { data: session, status } = useSession()
@@ -90,7 +91,17 @@ export default function Profile() {
         <Navbar>
           <div className="flex flex-col">
             <div className="card flex-shrink-0 w-full shadow-2xl p-4 gap-2">
-              <h1 className="text-3xl">Seu perfil</h1>
+              <div className="flex justify-between">
+                <h1 className="text-3xl">Seu perfil</h1>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    router.push('/dashboard/profile/edit')
+                  }}
+                >
+                  <FaPen />
+                </button>
+              </div>
               <div className="flex flex-col">
                 <p className="text-xl">Nome: {user.name}</p>
                 <p className="text-xl">Email: {user.email}</p>

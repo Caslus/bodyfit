@@ -16,9 +16,6 @@ export default async (req, res) => {
       return res.status(404).json({ error: 'Erro ao executar ação' })
     }
     const userId = parseInt(req.query?.params[0])
-    if (token.user.user.id != userId && requester.role != 'ADMIN') {
-      return res.status(401).json({ error: 'Não autorizado' })
-    }
 
     if (req.method == 'GET') {
       const workoutId = parseInt(req.query?.params[1])
@@ -135,7 +132,7 @@ export default async (req, res) => {
         .catch(() => {
           return res.status(404).json({ error: 'Erro ao deletar treino' })
         })
-      if (workout.userId != userId && requester.role != 'ADMIN') {
+      if (workout.userId != token.user.user.id && requester.role != 'ADMIN') {
         return res.status(401).json({ error: 'Não autorizado' })
       }
       await prisma.exercise

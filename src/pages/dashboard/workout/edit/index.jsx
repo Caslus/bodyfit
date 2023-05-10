@@ -6,6 +6,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { CgSpinner } from 'react-icons/cg'
 import {
   FaExclamationTriangle,
   FaMinus,
@@ -32,6 +33,18 @@ export default function workoutPage() {
     name: 'exercises',
     defaultValues: workout?.exercises,
   })
+
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center text-5xl">
+        <CgSpinner className="animate-spin" />
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    router.push('/')
+  }
 
   useEffect(() => {
     if (!session) return
@@ -79,10 +92,11 @@ export default function workoutPage() {
   }
 
   const handleDelete = async () => {
-    const deleteWorkout = await fetch(`/api/user/workout/${workoutId}`, {
+    await fetch(`/api/user/workout/${workoutId}`, {
       method: 'DELETE',
+    }).then(() => {
+      router.push('/dashboard/')
     })
-    if (deleteWorkout) router.push('/dashboard/')
   }
 
   return (
@@ -185,8 +199,9 @@ export default function workoutPage() {
 
                         <button
                           className="btn"
-                          type="submit"
-                          onClick={() => {
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
                             remove(index)
                           }}
                         >
@@ -199,7 +214,10 @@ export default function workoutPage() {
 
                 <button
                   className="btn btn-primary"
-                  onClick={() => append({ name: '', sets: '', reps: '' })}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    append({ name: '', sets: '', reps: '' })
+                  }}
                 >
                   <FaPlus />
                 </button>
@@ -208,7 +226,8 @@ export default function workoutPage() {
               <div className="flex justify-between">
                 <button
                   className="btn"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault()
                     handleDelete()
                   }}
                 >

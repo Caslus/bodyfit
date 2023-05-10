@@ -6,16 +6,13 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
+import { CgSpinner } from 'react-icons/cg'
 import {
   FaDumbbell,
   FaExclamationTriangle,
   FaFlag,
-  FaMinus,
   FaPen,
-  FaPlus,
-  FaRedo,
-  FaTimes,
 } from 'react-icons/fa'
 import { Tb123 } from 'react-icons/tb'
 
@@ -23,13 +20,27 @@ export default function newWorkout() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
   const { register, handleSubmit, control } = useForm({
     defaultValues: {
       name: '',
     },
   })
 
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center text-5xl">
+        <CgSpinner className="animate-spin" />
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    router.push('/')
+  }
+
   const onSubmitAiWorkout = async (data) => {
+    setLoading(true)
     await fetch('/api/user/workout/getAiWorkout', {
       method: 'POST',
       body: JSON.stringify({
@@ -59,11 +70,14 @@ export default function newWorkout() {
             })
           } catch (e) {
             setError('Houve um erro ao gerar o treino')
+          } finally {
+            setLoading(false)
           }
         })
       })
       .catch((err) => {
         setError(err.err)
+        setLoading(false)
       })
   }
 
@@ -154,8 +168,16 @@ export default function newWorkout() {
               <div className="divider"></div>
               <div className="flex flex-col justify-center text-center">
                 <div className="w-full">
-                  <button className="btn btn-primary w-64" type="submit">
-                    Gerar treino
+                  <button
+                    className="btn btn-primary w-64"
+                    type="submit"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <CgSpinner className="animate-spin" />
+                    ) : (
+                      'Gerar treino'
+                    )}
                   </button>
                 </div>
                 <div className="divider">ou</div>
