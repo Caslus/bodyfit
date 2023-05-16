@@ -45,12 +45,7 @@ export default async (req, res) => {
       })
     } else if (req.method == 'PUT') {
       const data = JSON.parse(req.body)
-      if (
-        (data.role == 'ADMIN' || data.role == 'PREMIUM') &&
-        requester.role != 'ADMIN'
-      ) {
-        return res.status(401).json({ error: 'Não autorizado' })
-      }
+
       const user = await prisma.user
         .update({
           where: {
