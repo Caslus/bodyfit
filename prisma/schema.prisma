@@ -37,6 +37,8 @@ model User {
   gender       Gender?
   workouts     Workout[]
   madeWorkouts Workout[] @relation("madeBy")
+  messagesFrom Message[] @relation("fromUser")
+  messagesTo   Message[] @relation("toUser")
 }
 
 model Workout {
@@ -60,4 +62,15 @@ model Exercise {
   name      String
   sets      Int
   reps      String
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  fromUser   User     @relation(fields: [fromUserId], references: [id], name: "fromUser", onDelete: Cascade)
+  fromUserId Int
+  toUser     User     @relation(fields: [toUserId], references: [id], name: "toUser", onDelete: Cascade)
+  toUserId   Int
+  text       String
 }
