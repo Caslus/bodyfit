@@ -44,9 +44,9 @@ configurar .env
     GPT_URL= url do chat gpt
     GPT_TOKEN= token do chat gpt
 
-criar banco de dados
+criar e popular banco de dados
 
-    npx prisma db push
+    yarn reset
 
 ### iniciar ambiente de desenvolvimento
 
