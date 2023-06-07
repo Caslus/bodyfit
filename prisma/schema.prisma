@@ -49,7 +49,7 @@ model Workout {
   userId    Int
   name      String
   exercises Exercise[]
-  madeBy    User       @relation("madeBy", fields: [madeById], references: [id])
+  madeBy    User       @relation("madeBy", fields: [madeById], references: [id], onDelete: Cascade)
   madeById  Int
 }
 
