@@ -64,7 +64,7 @@ export default function Dashboard() {
                         className="btn btn-primary"
                         onClick={() => {
                           router.push({
-                            pathname: `/chat/${personal.id}`,
+                            pathname: `/dashboard/chat/${personal.id}`,
                           })
                         }}
                       >
