@@ -9,6 +9,7 @@ import {
   FaHome,
   FaDumbbell,
 } from 'react-icons/fa'
+import { BsFillChatDotsFill } from 'react-icons/bs'
 import { signOut } from 'next-auth/react'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
@@ -72,6 +73,16 @@ export default function Navbar({ children }) {
                 <a onClick={() => router.push('/dashboard/finder')}>
                   <FaDumbbell />
                   Encontrar personal
+                </a>
+              </li>
+            )}
+            {(user?.role == 'PREMIUM' ||
+              user?.role == 'PERSONAL' ||
+              user?.role == 'ADMIN') && (
+              <li key="chat">
+                <a onClick={() => router.push('/dashboard/chat')}>
+                  <BsFillChatDotsFill />
+                  Chat
                 </a>
               </li>
             )}

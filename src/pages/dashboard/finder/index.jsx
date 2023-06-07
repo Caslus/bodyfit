@@ -47,7 +47,7 @@ export default function Dashboard() {
     return (
       <>
         <Head>
-          <title>Bodyfit - Página inicial</title>
+          <title>Bodyfit - Procurar personal</title>
         </Head>
         <Navbar>
           <div className="flex flex-col items-center justify-center w-full h-full p-4 gap-4">
@@ -59,12 +59,12 @@ export default function Dashboard() {
                     <div className="card flex-shrink-0 w-full shadow-2xl p-4 gap-2 items-center">
                       <FaUserCircle className="text-6xl" />
                       <h1 className="text-2xl">{personal.name}</h1>
-                      {/* botão entrar em contato*/}
                       <button
                         className="btn btn-primary"
                         onClick={() => {
                           router.push({
-                            pathname: `/dashboard/chat/${personal.id}`,
+                            pathname: `/dashboard/chat/`,
+                            query: { id: personal.id },
                           })
                         }}
                       >
