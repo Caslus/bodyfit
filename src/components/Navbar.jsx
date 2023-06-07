@@ -7,6 +7,7 @@ import {
   FaSignOutAlt,
   FaUser,
   FaHome,
+  FaDumbbell,
 } from 'react-icons/fa'
 import { signOut } from 'next-auth/react'
 import { useSession } from 'next-auth/react'
@@ -66,18 +67,26 @@ export default function Navbar({ children }) {
                 Página inicial
               </a>
             </li>
+            {(user?.role == 'PREMIUM' || user?.role == 'ADMIN') && (
+              <li key="finder">
+                <a onClick={() => router.push('/dashboard/finder')}>
+                  <FaDumbbell />
+                  Encontrar personal
+                </a>
+              </li>
+            )}
             <li key="profile">
               <a onClick={() => router.push('/dashboard/profile')}>
                 <FaUser />
                 Perfil
               </a>
             </li>
-            <li key="config">
+            {/* <li key="config">
               <a>
                 <FaCog />
                 Configurações
               </a>
-            </li>
+            </li> */}
             {user?.role == 'ADMIN' && (
               <li key="admin">
                 <a onClick={() => router.push('/dashboard/admin')}>
