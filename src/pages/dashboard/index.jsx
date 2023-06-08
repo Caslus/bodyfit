@@ -65,7 +65,13 @@ export default function Dashboard() {
                 <h1 className="text-4xl font-bold">Seus treinos</h1>
                 <div className="grid grid-cols-2">
                   {workouts.map((workout, index) => {
-                    return <Workout workout={workout} key={index} />
+                    return (
+                      <Workout
+                        workout={workout}
+                        session={session}
+                        key={index}
+                      />
+                    )
                   })}
                 </div>
                 <button

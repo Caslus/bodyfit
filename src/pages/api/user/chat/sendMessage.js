@@ -25,7 +25,6 @@ export default async (req, res) => {
 
     if (req.method === 'POST') {
       const message = JSON.parse(req.body)
-      console.log(message)
       const newMessage = await prisma.message.create({
         data: {
           fromUserId: token.user.user.id,

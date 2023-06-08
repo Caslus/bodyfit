@@ -42,15 +42,16 @@ model User {
 }
 
 model Workout {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  name      String
-  exercises Exercise[]
-  madeBy    User       @relation("madeBy", fields: [madeById], references: [id], onDelete: Cascade)
-  madeById  Int
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  name        String
+  exercises   Exercise[]
+  madeBy      User         @relation("madeBy", fields: [madeById], references: [id], onDelete: Cascade)
+  madeById    Int
+  workoutLogs WorkoutLog[]
 }
 
 model Exercise {
@@ -73,4 +74,13 @@ model Message {
   toUser     User     @relation(fields: [toUserId], references: [id], name: "toUser", onDelete: Cascade)
   toUserId   Int
   text       String
+}
+
+model WorkoutLog {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  workout   Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  workoutId Int
+  date      DateTime
 }

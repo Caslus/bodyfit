@@ -236,6 +236,34 @@ async function seed() {
     },
   })
 
+  const log1 = await prisma.workoutLog.create({
+    data: {
+      workoutId: 4,
+      date: new Date(new Date().setDate(new Date().getDate() - 1)),
+    },
+  })
+
+  const log2 = await prisma.workoutLog.create({
+    data: {
+      workoutId: 4,
+      date: new Date(new Date().setDate(new Date().getDate() - 3)),
+    },
+  })
+
+  const log3 = await prisma.workoutLog.create({
+    data: {
+      workoutId: 4,
+      date: new Date(new Date().setDate(new Date().getDate() - 5)),
+    },
+  })
+
+  const log4 = await prisma.workoutLog.create({
+    data: {
+      workoutId: 5,
+      date: new Date(),
+    },
+  })
+
   console.log({
     admin,
     user1,
@@ -249,6 +277,10 @@ async function seed() {
     message6,
     message7,
     workout1,
+    log1,
+    log2,
+    log3,
+    log4,
   })
 }
 

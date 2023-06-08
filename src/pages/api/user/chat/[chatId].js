@@ -64,8 +64,7 @@ export default async (req, res) => {
         }
         return res.status(200).json({ messages })
       })
-      .catch((e) => {
-        console.log(e)
+      .catch(() => {
         return res.status(404).json({ error: 'Erro ao procurar mensagens' })
       })
   }
