@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import { CgSpinner } from 'react-icons/cg'
 import { FaUserCircle } from 'react-icons/fa'
 import Navbar from '@/components/Navbar'
-import { set } from 'react-hook-form'
 
 export default function Chat() {
   const { data: session, status } = useSession()
@@ -16,6 +15,7 @@ export default function Chat() {
   const [messages, setMessages] = useState({})
   const [message, setMessage] = useState('')
   const [shouldUpdate, setShouldUpdate] = useState(true)
+  const [otherUserData, setOtherUserData] = useState({})
 
   useEffect(() => {
     if (!session) return
@@ -27,6 +27,18 @@ export default function Chat() {
       const res = await user.json()
       if (res) setUser(res)
     }
+
+    async function getOtherUserData() {
+      const user = await fetch(
+        `/api/user/chat/getClientData/${currentChatId}`,
+        {
+          method: 'GET',
+        }
+      )
+      const res = await user.json()
+      if (res) setOtherUserData(res)
+    }
+
     async function getChats() {
       const chats = await fetch(`/api/user/chat/getChats/`, {
         method: 'GET',
@@ -46,6 +58,7 @@ export default function Chat() {
 
     getMessages()
     getUser()
+    getOtherUserData()
     getChats()
   }, [session, currentChatId, shouldUpdate])
 
@@ -137,45 +150,134 @@ export default function Chat() {
                 </div>
               )}
               {messages?.messages && currentChatId && (
-                <div className="flex flex-col p-8 w-full h-full justify-end gap-2">
-                  <div className="flex flex-col-reverse h-[80vh] overflow-scroll overflow-x-hidden">
-                    {messages.messages.map((message) => {
-                      return (
-                        <div
-                          className={`card p-4 m-2 bg-base-200
+                <div className="w-full h-full flex flex-row">
+                  <div className="flex flex-col w-full h-full p-4 gap-2">
+                    <div className="flex flex-col-reverse h-[83vh] overflow-scroll overflow-x-hidden">
+                      {messages.messages.map((message) => {
+                        return (
+                          <div
+                            className={`card p-4 m-2 bg-base-200
                         ${
                           message.fromUser.id == user.id
                             ? 'self-end bg-primary text-white'
                             : 'self-start'
                         }
                       `}
-                          key={`message-${message.id}`}
-                        >
-                          <p className="">{message.text}</p>
-                          <p className="font-bold text-sm self-end">
-                            {new Date(message.updatedAt)
-                              .toLocaleTimeString('en-GB')
-                              .slice(0, -3)}
-                          </p>
-                        </div>
-                      )
-                    })}
+                            key={`message-${message.id}`}
+                          >
+                            <p className="">{message.text}</p>
+                            <p className="font-bold text-sm self-end">
+                              {new Date(message.updatedAt)
+                                .toLocaleTimeString('en-GB')
+                                .slice(0, -3)}
+                            </p>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <div className="flex flex-row justify-between items-center">
+                      <input
+                        type="text"
+                        className="input input-bordered mr-2 w-full"
+                        placeholder="Digite sua mensagem"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                      />
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => sendMessage()}
+                      >
+                        Enviar
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex flex-row justify-between items-center">
-                    <input
-                      type="text"
-                      className="input input-bordered mr-2 w-full"
-                      placeholder="Digite sua mensagem"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                    />
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => sendMessage()}
-                    >
-                      Enviar
-                    </button>
-                  </div>
+                  {(user?.role == 'PERSONAL' ||
+                    (user?.role == 'ADMIN' && otherUserData)) && (
+                    <div className="flex flex-col pt-8 w-[60rem] gap-2">
+                      <h3 className="font-bold text-3xl">
+                        {otherUserData?.name}
+                      </h3>
+                      <h2 className="font-bold text-xl">Dados</h2>
+                      <span>
+                        Data de nascimento:{' '}
+                        {new Date(
+                          otherUserData?.nasc.slice(0, 10)
+                        ).toLocaleDateString('en-GB')}
+                      </span>
+                      <span>Altura: {otherUserData?.height}cm</span>
+                      <span>Peso: {otherUserData?.weight}kg</span>
+                      <span>Sexo: {otherUserData?.gender}</span>
+                      <h2 className="font-bold text-xl">Treinos</h2>
+                      {otherUserData?.workouts &&
+                      otherUserData.workouts.length > 0 ? (
+                        otherUserData.workouts.map((workout) => {
+                          return (
+                            <div className="collapse collapse-arrow bg-base-200">
+                              <input type="checkbox" defaultValue={false} />
+                              <div className="collapse-title font-bold">
+                                {workout.name}
+                              </div>
+                              <div className="collapse-content">
+                                <div className="flex flex-col">
+                                  <div className="overflow-x-auto">
+                                    <table className="table table-zebra">
+                                      <thead>
+                                        <tr>
+                                          <th>Exercício</th>
+                                          <th>Séries</th>
+                                          <th>Repetições</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {workout.exercises.map((exercise) => {
+                                          return (
+                                            <tr>
+                                              <td className="w-96">
+                                                {exercise.name}
+                                              </td>
+                                              <td>{exercise.sets}</td>
+                                              <td>{exercise.reps}</td>
+                                            </tr>
+                                          )
+                                        })}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                                <div className="collapse collapse-arrow bg-base-300">
+                                  <input type="checkbox" defaultValue={false} />
+                                  <div className="collapse-title font-bold">
+                                    Histórico de treino
+                                  </div>
+                                  <div className="collapse-content">
+                                    {workout?.workoutLogs &&
+                                    workout.workoutLogs.length > 0 ? (
+                                      <ul>
+                                        {workout.workoutLogs.map((log) => (
+                                          <li>
+                                            -{' '}
+                                            {new Date(
+                                              log.date
+                                            ).toLocaleDateString('en-GB')}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    ) : (
+                                      <p className="text-center">
+                                        Nenhuma atividade cadastrada
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })
+                      ) : (
+                        <p className="text-center">Nenhum treino cadastrado</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
